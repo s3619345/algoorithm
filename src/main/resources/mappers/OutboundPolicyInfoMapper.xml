@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.OutboundPolicyInfoMapper">
+    <select id="getTOutboundPolicyInfos" parameterType="java.lang.String" resultMap="outboundPolicyInfo">
+        SELECT *
+        FROM t_outbound_policy_info
+        WHERE domain = #{domain}
+          and name = #{name}
+    </select>
+    <select id="getTOutboundPolicyInfo" parameterType="java.lang.String" resultMap="outboundPolicyInfo">
+        select *
+        from t_outbound_policy_info
+        where domain =#{domain}
+    </select>
+    <select id="getCallAnswerStep" resultMap="outboundPolicyInfo">
+        select * from t_outbound_policy_info where name=#{activityName}
+    </select>
+    <select id="getTOutboundPolicyInfoNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_outbound_policy_info
+        where domain =#{domain}
+    </select>
+    <select id="getTOutboundPolicyInfosList" resultMap="outboundPolicyInfo">
+        select *
+        from t_outbound_policy_info
+        where domain =#{domain}
+          and name like concat('%'
+            , #{policyName}
+            , '%')
+    </select>
+    <select id="checkName" resultType="java.lang.Integer">
+        select count(*)
+        from t_outbound_policy_info
+        where name = #{name}
+          and domain =#{domain}
+    </select>
+    <update id="updateOutboundPolicyInfo" parameterType="outboundPolicyInfo">
+        update t_outbound_policy_info
+        set name=#{name},
+            domain=#{domain},
+            descb=#{descb},
+            timeRangeStr=#{timeRangeStr},
+            resProcessStr=#{resProcessStr},
+            policyType=#{policyType},
+            workDayType=#{workDayType},
+            callAnswerStep=#{callAnswerStep}
+        where id = #{id}
+    </update>
+    <insert id="createOutboundPolicyInfo" parameterType="outboundPolicyInfo">
+    insert into t_outbound_policy_info(name, domain, descb, timeRangeStr, resProcessStr, policyType, workDayType,
+                                           callAnswerStep)
+        values (#{name},#{domain}, #{descb}, #{timeRangeStr}, #{resProcessStr}, #{policyType}, #{workDayType},
+                #{callAnswerStep})
+    </insert>
+    <delete id="deleteOutboundPolicyInfo" parameterType="outboundPolicyInfo">
+        delete
+        from t_outbound_policy_info
+        where id = #{id}
+    </delete>
+    <resultMap id="outboundPolicyInfo" type="com.sense.newots.object.entity.OutboundPolicyInfo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="domain" column="domain"/>
+        <result property="descb" column="descb"/>
+        <result property="timeRangeStr" column="timeRangeStr"/>
+        <result property="resProcessStr" column="resProcessStr"/>
+        <result property="policyType" column="policyType"/>
+        <result property="workDayType" column="workDayType"/>
+        <result property="callAnswerStep" column="callAnswerStep"/>
+    </resultMap>
+</mapper>

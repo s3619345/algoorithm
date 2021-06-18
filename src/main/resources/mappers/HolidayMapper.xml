@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.HolidayMapper">
+    <select id="getTHolidays" resultMap="holiday">
+        select *
+        from t_holiday
+        where domain =#{domain}
+    </select>
+    <select id="getTHolidayNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_holiday
+            where domain=#{domain}
+    </select>
+    <delete id="deleteHoliday" parameterType="java.lang.Integer">
+        delete from t_holiday where id=#{id}
+    </delete>
+    <insert id="createHoliday" parameterType="com.sense.newots.object.entity.Holiday">
+        insert into t_holiday(startDate, endDate, domain, holidayType)
+        values (#{startDate}, #{endDate}, #{domain}, #{holidayType})
+    </insert>
+    <update id="updateHoliday" parameterType="com.sense.newots.object.entity.Holiday">
+        update t_holiday set startDate=#{startDate},endDate=#{endDate},domain=#{domain},holidayType=#{holidayType}
+        where id=#{id}
+    </update>
+    <resultMap id="holiday" type="com.sense.newots.object.entity.Holiday">
+        <id property="id" column="id"></id>
+        <result property="startDate" column="startDate"/>
+        <result property="endDate" column="endDate"/>
+        <result property="domain" column="domain"/>
+        <result property="holidayType" column="holidayType"/>
+    </resultMap>
+</mapper>

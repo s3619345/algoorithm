@@ -1,0 +1,53 @@
+<config name="config">
+    <!-- 服务监听端口 -->
+    <variable name="port">
+        8081
+    </variable>
+    <!-- 服务监听IP -->
+    <variable name="bind_ip">
+        0.0.0.0
+    </variable>
+    <!-- Redis连接地址 -->
+    <variable name="db_url">
+<!--        r-uf620avx4pqhgckyom.redis.rds.aliyuncs.com:6379-->
+        <!--192.168.1.134:6379-->
+        127.0.0.1:6379
+    </variable>
+    <!-- 服务连接Redis 密码 -->
+    <variable name="db_pwd">
+<!--        senseINFO0419-->
+    </variable>
+    <!-- Conf 服务地址 -->
+    <variable name="conf_url">
+        http://192.168.149.45:8080/
+    </variable>
+    <variable name="outbound_url">
+<!--        http://192.168.149.58:8138/ces_outbound/csta/makecall-->
+    </variable>
+    <!--     <variable name="outbound_url">
+        http://192.168.149.45:8138/ces_outbound/csta/makecall
+        </variable> -->
+    <!-- web-api的URL -->
+    <variable name="penny_url">
+        http://192.168.149.83:8900/external-api/openApi/job/pushJobResult
+    </variable>
+
+    <variable name="sms_url">
+        http://192.168.149.44:8094/SMS/YunXiaomi/mistressSend.do
+    </variable>
+
+    <variable name="sms_fail">
+        http://192.168.149.44:8094/SMS/batchSendSMS/sendMsgCont
+    </variable>
+
+    <variable name="mongodb_url">
+        <!--http://47.100.53.252:8777/dataSync2mongdb/dataSync-->
+        http://192.168.149.101:8887/dataSync2mongdb/dataSync
+    </variable>
+
+    <variable name="strategy_url">
+        <!--http://192.168.149.43:8086/ivrStrategy/scene/replayData-->
+        <!--http://192.168.1.134:8086/scene/replayData-->
+        http://192.168.149.101:8086/ivrStrategy/scene/replayData
+    </variable>
+</config>

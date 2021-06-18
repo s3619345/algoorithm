@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.TrunkPoolCorrMapper">
+    <select id="getTTrunkPoolCorr" resultMap="trunkPoolCorr">
+        select *
+        from t_trunk_pool_corr
+        where trunkPoolName = #{poolName}
+          and domain =#{domain}
+    </select>
+    <select id="getTTrunkPoolCorrs" resultMap="trunkPoolCorr">
+        select *
+        from t_trunk_pool_corr
+        where trunkPoolName = #{poolName}
+    </select>
+    <select id="getTTrunkPoolNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_trunk_pool_corr
+        where domain =#{domain}
+          and trunkPoolName=#{poolName}
+    </select>
+    <delete id="deleteTrunkPoolCorr" parameterType="java.lang.Integer">
+        delete from t_trunk_pool_corr where id=#{id}
+    </delete>
+    <update id="updateTrunkPoolCorr" parameterType="com.sense.newots.object.entity.TrunkPoolCorr">
+        update t_trunk_pool_corr set trunkPoolName=#{trunkPoolName},displayNum=#{displayNum},domain=#{domain} where id = #{id}
+    </update>
+    <insert id="createTrunkPoolCorr" parameterType="com.sense.newots.object.entity.TrunkPoolCorr">
+        insert into t_trunk_pool_corr(trunkPoolName, displayNum, domain)
+        values (#{trunkPoolName}, #{displayNum}, #{domain})
+    </insert>
+    <resultMap id="trunkPoolCorr" type="com.sense.newots.object.entity.TrunkPoolCorr">
+        <id property="id" column="id"/>
+        <result property="trunkPoolName" column="trunkPoolName"/>
+        <result property="displayNum" column="displayNum"/>
+        <result property="domain" column="domain"/>
+    </resultMap>
+</mapper>

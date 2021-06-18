@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.CircuitConfMapper">
+    <select id="findByActivityId" resultMap="CircuitConf">
+        select *
+        from t_circuit_conf
+        where activity_name = #{activityName}
+    </select>
+    <select id="getCircuitInfoNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_circuit_conf
+    </select>
+    <select id="getCircuitInfos" resultMap="CircuitConf">
+        select * from t_circuit_conf where 1=1
+        <if test="isRun !=null and isRun !=''">
+            and is_run=#{isRun}
+        </if>
+        <if test="activityName !=null and activityName !=''">
+            and activity_name=#{activityName}
+        </if>
+        <if test="perfix !=null and perfix !=''">
+            and perfix=#{perfix}
+        </if>
+        order by activity_name,end_time
+    </select>
+    <select id="getCircuitListStrartTime" resultMap="CircuitConf">
+        SELECT id,
+               activity_name AS activityName,
+               activity_desc AS activityDesc,
+               MIN(start_time)  startTime,
+               end_time      AS endTime,
+               prefix,
+               create_time   AS createTime
+        FROM t_circuit_conf
+        WHERE REPLACE(start_time, ':', '') = REPLACE((SUBSTRING(NOW(), -8, 5)), ':', '')
+          AND is_run = 0
+        GROUP BY activity_name
+    </select>
+    <select id="getCircuitListEndTime" resultMap="CircuitConf">
+        SELECT id,
+               activity_name AS activityName,
+               activity_desc AS activityDesc,
+               start_time    AS startTime,
+               MIN(end_time)    endTime,
+               prefix,
+               create_time   AS createTime,
+               is_run        AS isRun
+        FROM t_circuit_conf
+        WHERE REPLACE(end_time, ':', '') = REPLACE((SUBSTRING(NOW(), -8, 5)), ':', '')
+          AND is_run = 1
+        GROUP BY activity_name
+    </select>
+    <update id="updateCircuit" parameterType="com.sense.newots.object.entity.CircuitConf">
+        update t_circuit_conf
+        <set>
+            activity_name=#{activityName},
+            activity_desc=#{activityDesc},
+            start_time=#{startTime},
+            end_time=#{endTime},
+            prefix={prefix},
+            create_time=#{createTime},
+            is_run=#{isRun}
+        </set>
+    </update>
+    <update id="updateCircuitByStatus" parameterType="com.sense.newots.object.entity.CircuitConf">
+        UPDATE t_circuit_conf
+        set is_run=0
+        WHERE is_run != 0
+    </update>
+    <insert id="saveCircuit" parameterType="com.sense.newots.object.entity.CircuitConf">
+        insert into t_circuit_conf(activity_name, activity_desc, start_time, end_time, prefix, is_run, create_time)
+        values (#{activityName}, #{activityDesc}, #{startTime}, #{endTime}, #{prefix}, #{isRun}, #{createTime})
+    </insert>
+    <delete id="delCircuit" parameterType="com.sense.newots.object.entity.CircuitConf">
+        delete from t_circuit_conf where id=#{id}
+    </delete>
+    <resultMap id="CircuitConf" type="com.sense.newots.object.entity.CircuitConf">
+        <id property="id" column="id"/>
+        <result property="activityName" column="activity_name"/>
+        <result property="activityDesc" column="activity_desc"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="prefix" column="prefix"/>
+        <result property="isRun" column="is_run"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+</mapper>

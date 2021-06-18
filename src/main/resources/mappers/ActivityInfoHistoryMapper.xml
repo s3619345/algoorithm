@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.ActivityInfoHistoryMapper">
+    <select id="getTActivityInfoHistorys" resultMap="activityInfoHistory">
+        select *
+        from t_activity_info_history
+        where domain =#{domain}
+          and name like concat('%' , #{activityName} , '%')
+    </select>
+    <select id="getTActivityInfoHistoryNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_activity_info_history
+        where domain =#{domain};
+    </select>
+    <delete id="deleteActivityInfoHistory" parameterType="com.sense.newots.object.entity.ActivityInfoHistory">
+       delete  from t_activity_info_history where id=#{id}
+    </delete>
+    <update id="updateActivityInfoHistory" parameterType="com.sense.newots.object.entity.ActivityInfoHistory">
+        update t_activity_info_history
+        set name=#{name},
+            domain=#{domain},
+            status=#{status},
+            region=#{region},
+            descb=#{descb},
+            policyName=#{policyName},
+            rosterTemplateName=#{rosterTemplateName},
+            maxCapacity=#{maxCapacity},
+            priority=#{priority},
+            localNo=#{localNo},
+            conditionInfo=#{conditionInfo},
+            uui=#{uui},
+            trunkGrp=#{trunkGrp},
+            lastUpdateTime=#{lastUpdateTime},
+            prefix=#{prefix},
+            beginDatetime=#{beginDatetime},
+            endDatetime=#{endDatetime},
+            activityExecuteType=#{activityExecuteType},
+            activityExecuteTime=#{activityExecuteTime},
+            activityBackAddr=#{activityBackAddr},
+            activityBackAddrType=#{activityBackAddrType},
+            completeType=#{completeType},
+            orderType=#{orderType},
+            roterNum=#{roterNum},
+            completeBatchNum=#{completeBatchNum},
+            outCallNum=#{outCallNum},
+            unCallNum=#{unCallNum},
+            answerCallNum=#{answerCallNum},
+            dncNum=#{dncNum}
+        where id = #{id}
+    </update>
+    <insert id="createActivityInfoHistory" parameterType="com.sense.newots.object.entity.ActivityInfoHistory">
+        insert into t_activity_info_history(name, domain, status, region, descb, policyName, rosterTemplateName,
+                                            maxCapacity,
+                                            priority, localNo, conditionInfo, uui, trunkGrp, lastUpdateTime, prefix,
+                                            beginDatetime,
+                                            endDatetime, activityExecuteType, activityExecuteTime, activityBackAddr,
+                                            activityBackAddrType,
+                                            completeType, orderType, roterNum, completeBatchNum, outCallNum, unCallNum,
+                                            answerCallNum, dncNum)
+        values (#{name}, #{domain}, #{status}, #{region}, #{descb}, #{policyName}, #{rosterTemplateName},
+                #{maxCapacity},
+                #{priority}, #{localNo}, #{conditionInfo}, #{uui}, #{trunkGrp}, #{lastUpdateTime}, #{prefix},
+                #{beginDatetime},
+                #{endDatetime}, #{activityExecuteType}, #{activityExecuteTime}, #{activityBackAddr},
+                #{activityBackAddrType},
+                #{completeType}, #{orderType}, #{roterNum}, #{completeBatchNum}, #{outCallNum}, #{unCallNum},
+                #{answerCallNum}, #{dncNum})
+    </insert>
+    <resultMap id="activityInfoHistory" type="com.sense.newots.object.entity.ActivityInfoHistory">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="domain" column="domain"/>
+        <result property="status" column="status"/>
+        <result property="region" column="region"/>
+        <result property="descb" column="descb"/>
+        <result property="policyName" column="policyName"/>
+        <result property="rosterTemplateName" column="rosterTemplateName"/>
+        <result property="maxCapacity" column="maxCapacity"/>
+        <result property="priority" column="priority"/>
+        <result property="localNo" column="localNo"/>
+        <result property="conditionInfo" column="conditionInfo"/>
+        <result property="uui" column="uui"/>
+        <result property="trunkGrp" column="trunkGrp"/>
+        <result property="lastUpdateTime" column="lastUpdateTime"/>
+        <result property="prefix" column="prefix"/>
+        <result property="beginDatetime" column="beginDatetime"/>
+        <result property="endDatetime" column="endDatetime"/>
+        <result property="activityExecuteType" column="activityExecuteType"/>
+        <result property="activityExecuteTime" column="activityExecuteTime"/>
+        <result property="activityBackTime" column="activityBackTime"/>
+        <result property="activityBackAddr" column="activityBackAddr"/>
+        <result property="activityBackAddrType" column="activityBackAddrType"/>
+        <result property="completeType" column="completeType"/>
+        <result property="orderType" column="orderType"/>
+        <result property="rosterNum" column="roterNum"/>
+        <result property="completeBatchNum" column="completeBatchNum"/>
+        <result property="outCallNum" column="outCallNum"/>
+        <result property="unCallNum" column="unCallNum"/>
+        <result property="answerCallNum" column="answerCallNum"/>
+        <result property="dncNum" column="dncNum"/>
+    </resultMap>
+</mapper>

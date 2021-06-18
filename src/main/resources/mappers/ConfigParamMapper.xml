@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.ConfigParamMapper">
+    <select id="findByName" resultMap="configParam">
+        select *
+        from t_config_param
+        where name = #{name}
+    </select>
+    <select id="getTConfigParams" resultMap="configParam">
+        select *
+        from t_config_param
+        where domain =#{domain}
+          and paramType=#{paramType}
+    </select>
+    <select id="getTConfigParamNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_config_param
+        where domain =#{domain}
+          and paramType=#{paramType}
+    </select>
+    <select id="checkConfigParamName" resultType="java.lang.Integer">
+        select count(*) from t_config_param where name=#{name}
+    </select>
+    <delete id="deleteConfigParam" parameterType="com.sense.newots.object.entity.ConfigParam">
+        delete
+        from t_config_param
+        where id = #{id}
+    </delete>
+    <update id="updateConfigParam" parameterType="com.sense.newots.object.entity.ConfigParam">
+        update t_config_param
+        set name=#{name}, value =#{value}, domain =#{domain}, paramType=#{paramType}, validLength=#{validLength}
+        where id = #{id}
+    </update>
+    <insert id="createConfigParam" parameterType="com.sense.newots.object.entity.ConfigParam">
+        insert into t_config_param(name, value, domain, paramType, validLength)
+        values (#{name}, #{value}, #{domain}, #{paramType}, #{validLength})
+    </insert>
+    <resultMap id="configParam" type="com.sense.newots.object.entity.ConfigParam">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="value" column="value"/>
+        <result property="domain" column="domain"/>
+        <result property="paramType" column="paramType"/>
+        <result property="validLength" column="validLength"/>
+    </resultMap>
+</mapper>

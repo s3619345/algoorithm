@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.RosterTemplateMapper">
+    <select id="getTRosterTemplateInfo" resultMap="rosterTemplateInfo">
+        select *
+        from t_roster_template_info
+        where domain =#{domain}
+          and name = #{templateName}
+    </select>
+    <select id="getTRosterTemplateList" resultMap="rosterTemplateInfo">
+        select *
+        from t_roster_template_info
+        where domain =#{domain}
+          and name like concat('%'
+            , #{templateName}
+            , '%')
+    </select>
+    <select id="getTRosterTemplateInfoNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from t_roster_template_info
+        where domain =#{domain}
+    </select>
+    <select id="findByName" resultMap="rosterTemplateInfo">
+        select *
+        from t_roster_template_info
+        where domain =#{domain}
+          and name =#{templateName}
+    </select>
+    <select id="checkName" resultType="java.lang.Integer">
+         select count(*) from t_roster_template_info where name=#{name} and domain=#{domain}
+    </select>
+    <insert id="createRosterTemplateInfo" parameterType="rosterTemplateInfo">
+        insert into t_roster_template_info(id, name, descb, domain, columns, createtime, lastModifyTime, importPath,
+                                           importMode, importTime, lastImportTime, lastImportStatus, filterCondition,
+                                           expireDays, contactNums)
+        values (#{id}, #{name}, #{descb}, #{domain}, #{columns}, #{createtime}, #{lastModifyTime}, #{importPath},
+                #{importMode}, #{importTime}, #{lastImportTime}, #{lastImportStatus}, #{filterCondition}, #{expireDays},
+                #{contactNums})
+    </insert>
+    <update id="updateRosterTemplateInfo" parameterType="rosterTemplateInfo">
+        update t_roster_template_info
+        set name=#{name}, descb=#{descb},domain=#{domain}, columns=#{columns}, createtime=#{createtime},
+            lastModifyTime=#{lastModifyTime}, importPath=#{importPath}, importMode=#{importMode}, importTime=#{importTime}, lastImportTime=#{lastImportTime},
+            lastImportStatus=#{lastImportStatus}, filterCondition=#{filterCondition}, expireDays=#{expireDays}, contactNums=#{contactNums}
+        where id=#{id}
+    </update>
+    <delete id="deleteRosterTemplateInfo" parameterType="rosterTemplateInfo">
+           delete  from t_roster_template_info where id=#{id}
+    </delete>
+    <resultMap id="rosterTemplateInfo" type="com.sense.newots.object.entity.RosterTemplateInfo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="descb" column="descb"/>
+        <result property="domain" column="domain"/>
+        <result property="columns" column="columns"/>
+        <result property="createtime" column="createtime"/>
+        <result property="lastModifyTime" column="lastModifyTime"/>
+        <result property="importPath" column="importPath"/>
+        <result property="importMode" column="importMode"/>
+        <result property="importTime" column="importTime"/>
+        <result property="lastImportTime" column="lastImportTime"/>
+        <result property="lastImportStatus" column="lastImportStatus"/>
+        <result property="filterCondition" column="filterCondition"/>
+        <result property="expireDays" column="expireDays"/>
+        <result property="contactNums" column="contactNums"/>
+    </resultMap>
+</mapper>

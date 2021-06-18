@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.DNCNumberMapper">
+    <select id="getTDNCNumbersQuery" resultMap="dncNumber">
+        select *
+        from t_dnc_number
+        where domain =#{domain}
+          and dncTemplateId=#{dncSet}
+          and phoneNum=#{phoneNum}
+    </select>
+    <select id="getTDNCNumberNumQuery" resultType="java.lang.Integer">
+        select count(*)
+        from t_dnc_number
+        where domain =#{domain}
+          and dncTemplateId=#{dncSet}
+          and phoneNum=#{phoneNum}
+    </select>
+    <select id="getTDNCNumbers" resultMap="dncNumber">
+        select *
+        from t_dnc_number
+        where domain =#{domain}
+          and dncTemplateId=#{dncSet}
+    </select>
+    <select id="getTDNCNumberNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_dnc_number
+        where domain =#{domain}
+          and dncTemplateId=#{dncSet}
+    </select>
+    <select id="findById" resultMap="dncNumber">
+        select * from t_dnc_number where id=#{id}
+    </select>
+    <delete id="clear" parameterType="java.lang.String">
+        delete from t_dnc_number where dncTemplateId=#{id}
+    </delete>
+    <delete id="deleteDNCNumber" parameterType="java.lang.Integer">
+        delete from t_dnc_number where id=#{id}
+    </delete>
+    <insert id="createDNCNumber" parameterType="com.sense.newots.object.entity.DNCNumber">
+        insert into t_dnc_number(phoneNum, domain, dncTemplateId, status)
+        values (#{phoneNum}, #{domain}, #{dncTemplateId}, #{status})
+    </insert>
+    <update id="updateDNCNumber" parameterType="com.sense.newots.object.entity.DNCNumber">
+        update t_dnc_number set phoneNum=#{phoneNum},domain=#{domain},dncTemplateId=#{dncTemplateId},status=#{status} where id=#{id}
+    </update>
+    <insert id="createDNCNumberList">
+        insert into t_dnc_number(phoneNum, domain, dncTemplateId, status) values
+        <foreach collection="infos" item="info" separator=";">
+            (#{info.phoneNum},#{info.domain},#{info.dncTemplateId},#{info.status})
+        </foreach>
+    </insert>
+    <resultMap id="dncNumber" type="com.sense.newots.object.entity.DNCNumber">
+        <id property="id" column="id"/>
+        <result property="phoneNum" column="phoneNum"/>
+        <result property="domain" column="domain"/>
+        <result property="dncTemplateId" column="dncTemplateId"/>
+        <result property="status" column="status"/>
+    </resultMap>
+</mapper>

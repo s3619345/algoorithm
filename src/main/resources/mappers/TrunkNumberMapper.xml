@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.TrunkNumberMapper">
+    <select id="findbyNum" parameterType="java.lang.String" resultMap="trunkNumber">
+        select *
+        from t_trunk_number
+        where displayNum = #{number}
+    </select>
+    <select id="getTTrunkNumbers" resultMap="trunkNumber">
+        select *
+        from t_trunk_number
+        where domain =#{domain}
+    </select>
+    <select id="getTTrunkNumberNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_trunk_number
+        where domain =#{domain}
+    </select>
+    <select id="checkPoolName" resultType="java.lang.Integer">
+        select count(*)
+        from t_trunk_number
+        where displayNum = #{name}
+    </select>
+    <delete id="deleteTrunkNumber" parameterType="java.lang.Integer">
+        delete
+        from t_trunk_number
+        where id = #{id}
+    </delete>
+    <update id="updateTrunkNumber" parameterType="com.sense.newots.object.entity.TrunkNumber">
+        update t_trunk_number
+        set displayNum=#{displayNum},
+            trunkGrp=#{trunkGrp},
+            domain=#{domain}
+        where id = #{id}
+    </update>
+    <insert id="createTrunkNumber" parameterType="com.sense.newots.object.entity.TrunkNumber">
+        insert into t_trunk_number(displayNum, trunkGrp, domain)
+        values (#{displayNum}, #{trunkGrp}, #{domain})
+    </insert>
+    <resultMap id="trunkNumber" type="com.sense.newots.object.entity.TrunkNumber">
+        <id property="id" column="id"/>
+        <result property="displayNum" column="displayNum"/>
+        <result property="trunkGrp" column="trunkGrp"/>
+        <result property="domain" column="domain"/>
+    </resultMap>
+</mapper>

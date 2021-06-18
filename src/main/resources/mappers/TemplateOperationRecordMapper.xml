@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.TemplateOperationRecordMapper">
+    <insert id="createTemplateOperationRecordInfo" parameterType="templateOperationRecord">
+        insert into t_template_operation_record(userName, template, status, prefix, maxCapacity, trunkGrp, isSMS)
+        values (#{userName}, #{template}, #{status}, #{prefix}, #{maxCapacity}, #{trunkGrp}, #{isSMS})
+    </insert>
+    <resultMap id="templateOperationRecord" type="com.sense.newots.object.entity.TemplateOperationRecord">
+        <id property="id" column="id"/>
+        <result property="userName" column="userName"/>
+        <result property="template" column="template"/>
+        <result property="status" column="status"/>
+        <result property="prefix" column="prefix"/>
+        <result property="maxCapacity" column="maxCapacity"/>
+        <result property="trunkGrp" column="trunkGrp"/>
+        <result property="isSMS" column="isSMS"/>
+    </resultMap>
+</mapper>

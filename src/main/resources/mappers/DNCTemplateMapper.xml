@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.DNCTemplateMapper">
+    <select id="getTDNCTemplates" resultMap="dncTemplate">
+        select * from t_dnc_template where domain=#{domain}
+        <if test="tname != null and tname != ''">
+            and dncTemplateName like concat('%',#{tname},'%')
+        </if>
+    </select>
+    <select id="getTDNCTemplateNum" resultType="java.lang.Integer">
+        select count(*) from t_dnc_template where domain=#{domain}
+        <if test="tname != null and tname != ''">
+            and dncTemplateName like concat('%',#{tname},'%')
+        </if>
+    </select>
+    <select id="getTDNCTemplateList" resultMap="dncTemplate">
+        select * from t_dnc_template where domain=#{domain}
+    </select>
+    <select id="getTDNCTemplateNumList" resultType="java.lang.Integer">
+        select count(*) from t_dnc_template where domain=#{domain}
+    </select>
+    <select id="findById" resultMap="dncTemplate">
+        select * from t_dnc_template where id=#{id}
+    </select>
+    <select id="checkDNCName" resultType="java.lang.Integer">
+        SELECT count(*)
+        from t_dnc_template
+        where domain =#{domain}
+          and dncTemplateName=#{name}
+    </select>
+    <delete id="deleteDNCTemplate" parameterType="java.lang.Integer">
+        delete
+        from t_dnc_template
+        where id = #{id}
+    </delete>
+    <insert id="createDNCTemplate" parameterType="com.sense.newots.object.entity.DNCTemplate">
+        insert into t_dnc_template(dncTemplateName, dncTemplateDesc, domain,type, serverType, serverAddr,
+                                   status, creater, updater, updateTime, executeTime, filterCondition)
+        values (#{dncTemplateName}, #{dncTemplateDesc}, #{domain}, #{type}, #{serverType}, #{serverAddr},
+                #{status}, #{creater}, #{updater}, #{updateTime}, #{executeTime}, #{filterCondition})
+    </insert>
+    <update id="updateDNCTemplate" parameterType="com.sense.newots.object.entity.DNCTemplate">
+        update t_dnc_template
+        set dncTemplateName=#{dncTemplateName},
+            dncTemplateDesc=#{dncTemplateDesc},
+            domain=#{domain},
+            type=#{type},
+            serverType=#{serverType},
+            serverAddr=#{serverAddr},
+            status=#{status},
+            creater=#{creater},
+            updater=#{updater},
+            updateTime=#{updateTime},
+            executeTime=#{executeTime},
+            filterCondition=#{filterCondition}
+        where id = #{id}
+    </update>
+    <resultMap id="dncTemplate" type="com.sense.newots.object.entity.DNCTemplate">
+        <id property="id" column="id"/>
+        <result property="dncTemplateName" column="dncTemplateName"/>
+        <result property="dncTemplateDesc" column="dncTemplateDesc"/>
+        <result property="domain" column="domain"/>
+        <result property="type" column="type"/>
+        <result property="serverType" column="serverType"/>
+        <result property="serverAddr" column="serverAddr"/>
+        <result property="status" column="status"/>
+        <result property="creater" column="creater"/>
+        <result property="updater" column="updater"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="executeTime" column="executeTime"/>
+        <result property="filterCondition" column="filterCondition"/>
+    </resultMap>
+</mapper>
