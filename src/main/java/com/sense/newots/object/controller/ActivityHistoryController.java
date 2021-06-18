@@ -1,3 +1,4 @@
+/*
 package com.sense.newots.object.controller;
 
 import com.github.pagehelper.PageHelper;
@@ -20,11 +21,13 @@ import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  @desc 历史活动模块
  @date 2021-05-28 10:48:07
  @author szz
- */
+ *//*
+
 @RestController
 @Slf4j
 @RequestMapping("/activityHistory")
@@ -109,4 +112,5 @@ public class ActivityHistoryController extends BaseResource {
     }
 
 }
+*/
 

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.ActivityInfoMapper">
+    <select id="selectActivityInfo" resultMap="ActivityInfo">
+        select *
+        from t_activity_info
+    </select>
+    <select id="findActivityInfoByTemplate" parameterType="java.lang.String"
+            resultMap="ActivityInfo">
+        select *
+        from t_activity_info
+        where rosterTemplateName = #{name}
+    </select>
+    <select id="clickCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM agent_oas.shorturl_click
+        WHERE ispider IS NULL
+          AND bid = #{bid}
+          AND add_time BETWEEN #{startTime} AND #{endTime}
+        GROUP BY phone
+    </select>
+    <select id="getStoppedActivityInfos" resultMap="ActivityInfo">
+        select *
+        from t_activity_info
+        where status = 3
+    </select>
+    <select id="getTActivityInfos" parameterType="java.lang.String"
+            resultType="com.sense.newots.object.entity.ActivityInfo">
+        select *
+        from t_activity_info
+        where domain =#{domain}
+          and rosterTemplateName=#{templateName}
+
+    </select>
+    <select id="getTActivityInfosList" resultMap="ActivityInfo">
+        select * from t_activity_info where 1=1
+        <if test="activityStatus != '00'and activityStatus != null">
+            and status=#{activityStatus}
+        </if>
+        <if test="prefix != null and prefix!=''">
+            and prefix=#{prefix}
+        </if>
+        <if test="activityName != null and activityName!=''">
+            and name like cancat('%',#{activityName},'%')
+        </if>
+    </select>
+    <select id="getTActivityInfoNum" resultType="java.lang.Integer">
+        select count(*)
+        from t_activity_info
+        where domain =#{domain}
+    </select>
+    <select id="findById" parameterType="java.lang.Integer" resultMap="ActivityInfo">
+        select *
+        from t_activity_info
+        where id = #{id}
+    </select>
+    <select id="checkName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*)
+        from t_activity_info
+        where name = #{name}
+          and domain =#{domain}
+    </select>
+    <select id="sendCount" resultType="java.lang.Integer">
+        select COUNT(*)
+        FROM agent_oas.shorturl_gen
+        WHERE bid = #{templateName}
+          AND add_time BETWEEN #{startTime} AND #{endTime}
+    </select>
+    <select id="findClick" resultType="java.util.List">
+        SELECT RIGHT (sendTime, 5) tenMin, SUM (count1) COUNT
+        FROM (SELECT CONCAT(LEFT (DATE_FORMAT(add_time, '%Y-%m-%d %H:%i'), 15), '0') AS sendTime, COUNT (*) AS count1 FROM (
+            SELECT c.bid, c.phone, g.add_time FROM agent_oas.shorturl_click c LEFT JOIN agent_oas.shorturl_gen g ON c.clickUrl = g.shortUrl
+            WHERE c.ispider IS NULL AND c.bid = #{templateName} AND g.bid = #{templateName} AND c.add_time BETWEEN #{startTime} AND #{endTime} GROUP BY phone
+            ) t1 GROUP BY sendTime ORDER BY sendTime ) t2
+        GROUP BY tenMin
+    </select>
+    <select id="findReptile">
+        SELECT RIGHT (sendTime, 5) tenMin, SUM (count1) COUNT
+        FROM (SELECT CONCAT(LEFT (DATE_FORMAT(add_time, '%Y-%m-%d %H:%i'), 15), '0') AS sendTime, COUNT (*) AS count1 FROM (
+            SELECT c.bid, c.phone, g.add_time FROM agent_oas.shorturl_click c LEFT JOIN agent_oas.shorturl_gen g ON c.clickUrl = g.shortUrl
+            WHERE c.ispider = 'Y' AND c.bid = #{templateName} AND g.bid = #{templateName} AND c.add_time BETWEEN #{startTime} AND #{endTime} GROUP BY phone
+            ) t1 GROUP BY sendTime ORDER BY sendTime )
+            t2
+        GROUP BY tenMin
+    </select>
+    <update id="updateActivityInfo" parameterType="com.sense.newots.object.entity.ActivityInfo">
+        update t_activity_info
+        set name                 = #{name},
+            bid                  = #{bid},
+            domain               = #{domain},
+            status               = #{status},
+            region               = #{region},
+            descb                = #{descb},
+            policyName           = #{policyName},
+            rosterTemplateName   = #{rosterTemplateName},
+            maxCapacity          = #{maxCapacity},
+            priority             = #{priority},
+            localNo              = #{localNo},
+            conditionInfo        = #{conditionInfo},
+            uui                  = #{uui},
+            trunkGrp             = #{trunkGrp},
+            lastUpdateTime       = #{lastUpdateTime},
+            prefix               = #{prefix},
+            successRate          = #{successRate},
+            beginDatetime        = #{beginDatetime},
+            endDatetime          = #{endDatetime},
+            activityExecuteType  = #{activityExecuteType},
+            activityExecuteTime  = #{activityExecuteTime},
+            activityBackTime     = #{activityBackTime},
+            activityBackAddr     = #{activityBackAddr},
+            activityBackAddrType = #{activityBackAddrType},
+            completeType         = #{completeType},
+            orderType            = #{orderType}
+        where id = #{id}
+    </update>
+    <update id="updatePrefix" parameterType="com.sense.newots.object.entity.ActivityInfo">
+        UPDATE t_activity_info
+        SET prefix = #{prefix}
+        WHERE NAME = #{name}
+    </update>
+    <update id="updateRosterNum">
+        UPDATE t_activity_info
+        SET roterNum = roterNum + #{rosterNum},
+            batchNum = batchNum + 1
+        WHERE NAME = #{name}
+    </update>
+    <delete id="deleteActivityInfo" parameterType="com.sense.newots.object.entity.ActivityInfo">
+        delete
+        from t_activity_info
+    </delete>
+    <delete id="deleteActivityInfoById" parameterType="java.lang.Integer">
+        delete
+        from t_activity_info
+        where id = #{id}
+    </delete>
+    <insert id="createActivityInfo" parameterType="com.sense.newots.object.entity.ActivityInfo">
+        insert into t_activity_info(name, bid, domain, status, region, descb, policyName, rosterTemplateName,
+                                    maxCapacity, priority, localNo, conditionInfo,
+                                    uui, trunkGrp, lastUpdateTime, prefix, successRate, beginDatetime, endDatetime,
+                                    activityExecuteType, activityExecuteTime,
+                                    activityBackTime, activityBackAddr, activityBackAddrType, completeType, orderType,
+                                    roterNum, batchNum, completeBatchNum,
+                                    outCallNum, unCallNum, answerCallNum, dncNum, isSMS, rate, callRound)
+        values (#{name}, #{bid}, #{domain}, #{status}, #{region}, #{descb}, #{policyName}, #{rosterTemplateName},
+                #{maxCapacity},
+                #{priority}, #{localNo}, #{conditionInfo}, #{uui}, #{trunkGrp}, #{lastUpdateTime}, #{prefix},
+                #{successRate}, #{beginDatetime},
+                #{endDatetime}, #{activityExecuteType}, #{activityExecuteTime}, #{activityBackTime},
+                #{activityBackAddr}, #{activityBackAddrType},
+                #{completeType}, #{orderType}, #{rosterNum}, #{batchNum}, #{completeBatchNum}, #{outCallNum},
+                #{unCallNum}, #{answerCallNum}, #{dncNum},
+                #{isSMS}, #{rate}, #{callRound})
+    </insert>
+    <resultMap id="ActivityInfo" type="com.sense.newots.object.entity.ActivityInfo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="bid" column="bid"/>
+        <result property="domain" column="domain"/>
+        <result property="status" column="status"/>
+        <result property="region" column="region"/>
+        <result property="descb" column="descb"/>
+        <result property="policyName" column="policyName"/>
+        <result property="rosterTemplateName" column="rosterTemplateName"/>
+        <result property="maxCapacity" column="maxCapacity"/>
+        <result property="priority" column="priority"/>
+        <result property="localNo" column="localNo"/>
+        <result property="conditionInfo" column="conditionInfo"/>
+        <result property="uui" column="uui"/>
+        <result property="trunkGrp" column="trunkGrp"/>
+        <result property="lastUpdateTime" column="lastUpdateTime"/>
+        <result property="prefix" column="prefix"/>
+        <result property="successRate" column="successRate"/>
+        <result property="beginDatetime" column="beginDatetime"/>
+        <result property="endDatetime" column="endDatetime"/>
+        <result property="activityExecuteType" column="activityExecuteType"/>
+        <result property="activityExecuteTime" column="activityExecuteTime"/>
+        <result property="activityBackTime" column="activityBackTime"/>
+        <result property="activityBackAddr" column="activityBackAddr"/>
+        <result property="activityBackAddrType" column="activityBackAddrType"/>
+        <result property="completeType" column="completeType"/>
+        <result property="orderType" column="orderType"/>
+        <result property="rosterNum" column="roterNum"/>
+        <result property="batchNum" column="batchNum"/>
+        <result property="completeBatchNum" column="completeBatchNum"/>
+        <result property="outCallNum" column="outCallNum"/>
+        <result property="unCallNum" column="unCallNum"/>
+        <result property="answerCallNum" column="answerCallNum"/>
+        <result property="dncNum" column="dncNum"/>
+        <result property="isSMS" column="isSMS"/>
+        <result property="rate" column="rate"/>
+        <result property="callRound" column="callRound"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.BatchRecordMapper">
+    <update id="updateRecordStatus" parameterType="java.lang.String">
+        UPDATE t_batch_record
+        SET callEndTime = #{time},
+            status      = 2
+        WHERE batchId = #{batchId} ORDER BY ADDTIME DESC limit 1
+    </update>
+    <update id="updateRecordTime">
+        UPDATE t_batch_record
+        SET status        =1,
+            prefix        = #{prefix},
+            maxCapacity   = #{maxCapacity},
+            trunkGrp      = #{trunk},
+            callStartTime = #{time}
+        WHERE batchId = #{batchId} ORDER BY addtime DESC limit 1
+    </update>
+    <insert id="saveBatchRecord" parameterType="com.sense.newots.object.entity.BatchRecord">
+        insert into t_batch_record(batchId, status, prefix, maxCapacity, trunkGrp, userName, addTime, callStartTime)
+        values (#{batchId}, #{status}, #{prefix}, #{maxCapacity}, #{trunkGrp}, #{userName}, #{addTime},
+                #{callStartTime})
+    </insert>
+    <resultMap id="BatchRecord" type="com.sense.newots.object.entity.BatchRecord">
+        <id property="id" column="id"/>
+        <result property="batchId" column="batchId"/>
+        <result property="status" column="status"/>
+        <result property="prefix" column="prefix"/>
+        <result property="maxCapacity" column="maxCapacity"/>
+        <result property="trunkGrp" column="trunkGrp"/>
+        <result property="userName" column="userName"/>
+        <result property="addTime" column="addTime"/>
+        <result property="callStartTime" column="callStartTime"/>
+    </resultMap>
+</mapper>

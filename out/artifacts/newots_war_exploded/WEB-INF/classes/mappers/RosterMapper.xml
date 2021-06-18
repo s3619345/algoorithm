@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.RosterMapper">
+    <select id="findBatchRosters" resultMap="rosterInfo">
+        select *
+        from t_roster_info
+        where batchName = #{batchName}
+          and status = 0
+          and id > #{id}
+        order by id asc limit 0,#{callLimit}
+
+    </select>
+    <select id="getContactNums" resultType="java.lang.Integer">
+        select count(*)
+        from t_roster_info
+        where domain =#{domain}
+          and templateName= #{templateName}
+          and status =0
+    </select>
+    <select id="findById" resultType="com.sense.newots.request.RosterResultW">
+        select *
+        from t_roster_info
+        where id = #{id}
+    </select>
+    <update id="addUnCalledRoster" parameterType="java.lang.String">
+        UPDATE t_roster_info
+        set makeCallTime = NULL,
+            callEndTime  = NULL,
+            callResult=NULL,
+            callTime     = 0,
+            resultCode=0,
+            status=0
+        WHERE batchName = #{batchId}
+          AND callAnswerTime IS NULL
+          and status !=3
+    </update>
+    <update id="updateRosterResult" parameterType="java.lang.String">
+        UPDATE t_roster_info
+        set makeCallTime = now(),
+            callEndTime  = now(),
+            callResult='振铃未接听',
+            callTime     = 0,
+            resultCode=11,
+            status=2
+        WHERE batchName = #{batchName}
+          AND STATUS = 1
+          AND callResult IS NULL
+    </update>
+    <update id="updateInfoByStatus" parameterType="java.lang.String">
+        UPDATE t_roster_info
+        SET status=0
+        WHERE batchName = #{batchId}
+          AND resultCode IN (11, 1, 9) limit #{needNum}
+    </update>
+    <update id="updateRosterCallResult" parameterType="com.sense.newots.request.RosterResultW">
+        update t_roster_info set callId=#{callId},callResult=#{result},resultCode=#{resultCode},callRound=#{round}
+        <if test="result != null and result != ''">
+            ,customerId=#{result}
+        </if>
+        <if test="callTime != null and callTime != ''">
+            ,callTime=#{callTime}
+        </if>
+        <if test="callTime != null and callTime != ''">
+            ,callTime=#{callTime}
+        </if>
+        <if test="answerTime != null and answerTime != ''">
+            ,callAnswerTime=#{answerTime}
+        </if>
+        <if test="hangupTime != null and hangupTime != ''">
+            ,callEndTime=#{hangupTime}
+        </if>
+        where id=#{rosterinfo_id}
+    </update>
+    <insert id="replaceRosterHistory" parameterType="com.sense.newots.object.entity.RosterInfo">
+        REPLACE
+        INTO
+        `t_roster_info_history`(jobId,phoneNum1,phoneNum2,phoneNum3,phoneNum4,phoneNum5,lastname,firstname,age,sex,customerId,email,address,cardType,cardNum,customFields,createTime,callId,prefix,callee,makeCallTime,callEndTime,callResult,callTime,resultCode,`status`,callRound,batchName,templateName,activityName,domain,operators)
+        SELECT jobId,
+               phoneNum1,
+               phoneNum2,
+               phoneNum3,
+               phoneNum4,
+               phoneNum5,
+               lastname,
+               firstname,
+               age,
+               sex,
+               customerId,
+               email,
+               address,
+               cardType,
+               cardNum,
+               customFields,
+               b.createTime,
+               callId,
+               prefix,
+               callee,
+               makeCallTime,
+               callEndTime,
+               callResult,
+               callTime,
+               resultCode,
+               r.`status`,
+               r.callRound,
+               batchName,
+               r.templateName,
+               r.activityName,
+               r.domain,
+               r.operators
+        FROM `t_roster_info` r
+                 LEFT JOIN `t_roster_batch_info` b ON r.batchName = b.batchId
+        WHERE TO_DAYS(NOW()) - TO_DAYS(b.createTime) &lt;= 1
+          AND b.STATUS = 2
+    </insert>
+    <insert id="createJdbcRosterInfo" parameterType="java.util.List">
+        insert into t_roster_info(jobId, phoneNum1, phoneNum2, phoneNum3, phoneNum4, phoneNum5, lastname, firstname,
+        age, sex, customerId, email, address, cardType, cardNum, customFields, createTime,
+        callId, callee, prefix, makeCallTime, callAnswerTime, callEndTime, callResult,
+        callTime, resultCode, status, callRound, batchName, templateName, activityName,
+        domain, operators)
+        values
+        <foreach collection="rosterInfoList" item="item" index="index" separator=",">
+            (#{item.jobId}, #{item.phoneNum1}, #{item.phoneNum2}, #{item.phoneNum3}, #{item.phoneNum4},
+            #{item.phoneNum5}, #{item.lastname},
+            #{item.firstname},
+            #{item.age}, #{item.sex}, #{item.customerId}, #{item.email}, #{item.address}, #{item.cardType},
+            #{item.cardNum}, #{item.customFields},
+            #{item.createTime},
+            #{item.callId}, #{item.callee}, #{item.prefix}, #{item.makeCallTime}, #{item.callAnswerTime},
+            #{item.callEndTime}, #{item.callResult},
+            #{item.callTime}, #{item.resultCode}, #{item.status}, #{item.callRound}, #{item.batchName},
+            #{item.templateName}, #{item.activityName},
+            #{item.domain}, #{item.operators})
+        </foreach>
+    </insert>
+
+    <update id="updateJdbcRosterInfo" parameterType="java.util.List">
+        <foreach collection="callList" item="item" index="index" separator=";">
+            update t_roster_info
+            <set>
+                status= 1,
+                <if test="item.caller != null and item.caller != ''">
+                    address= CONCAT(address,#{item.caller}),
+                </if>
+                <if test="item.callee != null and item.callee != ''">
+                    phoneNum5 = #{item.callee}
+                </if>
+            </set>
+            where batchName= #{item.batchName} and id = #{item.rosterinfoId}
+        </foreach>
+    </update>
+
+    <delete id="delRosterInfo" parameterType="java.lang.String">
+        delete
+        from t_roster_info
+        where batchName = #{batchId}
+    </delete>
+    <insert id="createRosterInfo" parameterType="rosterInfo">
+        insert into t_roster_info(jobId, phoneNum1, phoneNum2, phoneNum3, phoneNum4, phoneNum5, lastname, firstname,
+                                  age, sex, customerId, email, address, cardType, cardNum, customFields, createTime,
+                                  callId, callee, prefix, makeCallTime, callAnswerTime, callEndTime, callResult,
+                                  callTime, resultCode, status, callRound, batchName, templateName, activityName,
+                                  domain, operators)
+        values (#{jobId}, #{phoneNum1}, #{phoneNum2}, #{phoneNum3}, #{phoneNum4}, #{phoneNum5}, #{lastname},
+                #{firstname},
+                #{age}, #{sex}, #{customerId}, #{email}, #{address}, #{cardType}, #{cardNum}, #{customFields},
+                #{createTime},
+                #{callId}, #{callee}, #{prefix}, #{makeCallTime}, #{callAnswerTime}, #{callEndTime}, #{callResult},
+                #{callTime}, #{resultCode}, #{status}, #{callRound}, #{batchName}, #{templateName}, #{activityName},
+                #{domain}, #{operators})
+    </insert>
+    <resultMap id="rosterInfo" type="com.sense.newots.object.entity.RosterInfo">
+        <id property="id" column="id"/>
+        <result property="jobId" column="jobId"/>
+        <result property="phoneNum1" column="phoneNum1"/>
+        <result property="phoneNum2" column="phoneNum2"/>
+        <result property="phoneNum3" column="phoneNum3"/>
+        <result property="phoneNum4" column="phoneNum4"/>
+        <result property="phoneNum5" column="phoneNum5"/>
+        <result property="lastname" column="lastname"/>
+        <result property="firstname" column="firstname"/>
+        <result property="age" column="age"/>
+        <result property="sex" column="sex"/>
+        <result property="customerId" column="customerId"/>
+        <result property="email" column="email"/>
+        <result property="address" column="address"/>
+        <result property="cardType" column="cardType"/>
+        <result property="cardNum" column="cardNum"/>
+        <result property="customFields" column="customFields"/>
+        <result property="createTime" column="createTime"/>
+        <result property="callId" column="callId"/>
+        <result property="callee" column="callee"/>
+        <result property="prefix" column="prefix"/>
+        <result property="makeCallTime" column="makeCallTime"/>
+        <result property="callAnswerTime" column="callAnswerTime"/>
+        <result property="callEndTime" column="callEndTime"/>
+        <result property="callResult" column="callResult"/>
+        <result property="callTime" column="callTime"/>
+        <result property="resultCode" column="resultCode"/>
+        <result property="status" column="status"/>
+        <result property="callRound" column="callRound"/>
+        <result property="batchName" column="batchName"/>
+        <result property="templateName" column="templateName"/>
+        <result property="activityName" column="activityName"/>
+        <result property="domain" column="domain"/>
+        <result property="operators" column="operators"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.OutboundRecallPolicyMapper">
+    <select id="getTOutboundRecallPolicys" resultMap="outboundRecallPolicy">
+        select *
+        from t_outbound_recall_policy
+        where domain =#{domain}
+          and activityName=#{activityName}
+        order by round asc
+    </select>
+    <delete id="deleteOutboundRecallPolicy">
+        delete
+        from t_outbound_recall_policy
+        where domain =#{domain}
+          and activityName=#{activityName}
+    </delete>
+    <insert id="createOutboundRecallPolicy" parameterType="outboundRecallPolicy">
+        insert into t_outbound_recall_policy(activityName, round, callResult, phoneNumCol, domain, callInterval,
+                                             processInfo)
+        values (#{activityName}, #{round}, #{callResult}, #{phoneNumCol}, #{domain}, #{callInterval}, #{processInfo})
+    </insert>
+    <resultMap id="outboundRecallPolicy" type="com.sense.newots.object.entity.OutboundRecallPolicy">
+        <id property="id" column="id"/>
+        <result property="activityName" column="activityName"/>
+        <result property="round" column="round"/>
+        <result property="callResult" column="callResult"/>
+        <result property="phoneNumCol" column="phoneNumCol"/>
+        <result property="domain" column="domain"/>
+        <result property="callInterval" column="callInterval"/>
+        <result property="processInfo" column="processInfo"/>
+    </resultMap>
+</mapper>

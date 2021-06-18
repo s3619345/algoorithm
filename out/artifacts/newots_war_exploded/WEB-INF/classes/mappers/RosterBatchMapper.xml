@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sense.newots.object.dao.RosterBatchMapper">
+    <select id="getTodayRosterBatchInfos" parameterType="string" resultMap="rosterBatchInfo">
+        select *
+        from t_roster_batch_info
+        where createTime like concat("%", #{currentDate}, "%")
+        order by id asc
+    </select>
+    <select id="getRosterBatch" parameterType="java.lang.String" resultMap="rosterBatchInfo">
+        select *
+        from t_roster_batch_info
+        where batchId = #{batchId}
+    </select>
+    <select id="getFinishRosterBatchInfos" resultMap="rosterBatchInfo">
+        select *
+        from t_roster_batch_info
+        where TO_DAYS(NOW()) - TO_DAYS(createTime) &lt;= 1
+          and status = 2
+    </select>
+    <select id="findNextUncallBatch" resultMap="rosterBatchInfo">
+        select *
+        from t_roster_batch_info
+        where templateName = #{templateName}
+          and status = 0
+          and createTime between #{startTime} and #{endTime}
+        order by id asc
+    </select>
+    <select id="getTRosterBatchInfos" resultMap="rosterBatchInfo">
+          select * from t_roster_batch_info where domain=#{domain} and templateName=#{templateName} and createTime &gt;= DATE(NOW())
+    </select>
+    <select id="getTRosterBatchInfoNum">
+        select count(*) from t_roster_batch_info where domain= #{domain} and templateName=#{templateName}
+    </select>
+    <select id="getUncallRosterBatchInfoNum" resultType="java.lang.Integer">
+        select count(*) from t_roster_batch_info where domain= #{domain} and templateName=#{templateName} and createTime  like concat('%', #{currentDate}, '%')
+    </select>
+    <select id="checkTemplate" resultType="java.lang.Integer">
+        SELECT count(*) AS roter
+        from sensebot_rule_info.dial_scene
+        where TEMPLATE_CODE = #{templateName}
+          AND SCENE_DESC = '4'
+          AND IS_EFFECT = 1
+    </select>
+    <select id="findById" parameterType="java.lang.String" resultMap="rosterBatchInfo">
+        select *
+        from t_roster_batch_info
+        where id = #{id}
+    </select>
+    <select id="getUnCallRosterBatchInfos" resultMap="rosterBatchInfo">
+        select *
+        from t_roster_batch_info
+        where domain =#{domain}
+          and templateName=#{rosterTemplateName}
+          and createTime like concat('%', #{currentDate}, '%')
+    </select>
+    <select id="checkName">
+         select count(*) from t_roster_batch_info where batchId=#{name} and domain =#{domain}
+    </select>
+    <delete id="deleteRosterBatchInfo" parameterType="java.lang.String">
+        delete from t_roster_batch_info where id=#{id}
+    </delete>
+    <update id="updateRepeatCount" parameterType="java.lang.String">
+        UPDATE t_roster_batch_info
+        SET status = 1,
+            repeatCount = repeatCount - 1
+        WHERE batchId = #{batchId}
+    </update>
+    <update id="updateRosterBatchInfo" >
+        update t_roster_batch_info
+        set status=#{status}
+    </update>
+    <update id="updateRosterBatchIdo" parameterType="com.sense.newots.object.entity.ChangeBatchInfo">
+          update t_roster_batch_info set id=#{newId} where id=#{oldId}
+    </update>
+    <update id="updateRosterBatchByStatus" parameterType="java.lang.String">
+        UPDATE t_roster_batch_info
+        SET status    = 1,
+            startTime = #{time}
+        WHERE batchId = #{batchId}
+          and status = 0
+    </update>
+    <insert id="createRosterBatchInfo" parameterType="rosterBatchInfo">
+        insert into t_roster_batch_info(id, batchId, status, templateName, activityName, domain, createTime, startTime,
+                                        completeTime, callRound, planStartTime, repeatCronExpression, repeatCount,
+                                        currentFinishedRound, cronIdentification, rerunRound, roterNum, outCallNum,
+                                        unCallNum, answerCallNum, dncNum, fail1Num, fail2Num, fail3Num, fail4Num,
+                                        fail5Num, failOtherNum)
+        values (#{batchId}, #{batchId}, #{status}, #{templateName}, #{activityName}, #{domain}, #{createTime},
+                #{startTime}, #{completeTime}, #{callRound}, #{planStartTime},
+                #{repeatCronExpression}, #{repeatCount}, #{currentFinishedRound}, #{cronIdentification}, #{rerunRound},
+                #{roterNum}, #{outCallNum}, #{unCallNum}, #{answerCallNum},
+                #{dncNum}, #{fail1Num}, #{fail2Num}, #{fail3Num}, #{fail4Num}, #{fail5Num}, #{failOtherNum})
+    </insert>
+    <resultMap id="rosterBatchInfo" type="com.sense.newots.object.entity.RosterBatchInfo">
+        <id property="id" column="id"/>
+        <result property="batchId" column="batchId"/>
+        <result property="status" column="status"/>
+        <result property="templateName" column="templateName"/>
+        <result property="activityName" column="activityName"/>
+        <result property="domain" column="domain"/>
+        <result property="createTime" column="createTime"/>
+        <result property="startTime" column="startTime"/>
+        <result property="completeTime" column="completeTime"/>
+        <result property="callRound" column="callRound"/>
+
+        <result property="planStartTime" column="planStartTime"/>
+        <result property="repeatCronExpression" column="repeatCronExpression"/>
+        <result property="repeatCount" column="repeatCount"/>
+        <result property="currentFinishedRound" column="currentFinishedRound"/>
+        <result property="cronIdentification" column="cronIdentification"/>
+        <result property="rerunRound" column="rerunRound"/>
+
+        <result property="roterNum" column="roterNum"/>
+        <result property="outCallNum" column="outCallNum"/>
+        <result property="unCallNum" column="unCallNum"/>
+        <result property="answerCallNum" column="answerCallNum"/>
+        <result property="dncNum" column="dncNum"/>
+        <result property="fail1Num" column="fail1Num"/>
+        <result property="fail2Num" column="fail2Num"/>
+        <result property="fail3Num" column="fail3Num"/>
+        <result property="fail4Num" column="fail4Num"/>
+        <result property="fail5Num" column="fail5Num"/>
+        <result property="failOtherNum" column="failOtherNum"/>
+    </resultMap>
+</mapper>
